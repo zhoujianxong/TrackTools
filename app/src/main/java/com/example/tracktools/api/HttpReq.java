@@ -2,6 +2,7 @@ package com.example.tracktools.api;
 
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.http.Query;
@@ -52,8 +53,28 @@ public class HttpReq {
      * @param desc
      * @return
      */
-    public Observable<String> addServer(String key, String name, String desc) {
+    public Observable<Object> addServer(String key, String name, String desc) {
         return requests(RetrofitFactory.getInstance().create(ServerApi.class).addServer(key, name, desc), false);
     }
+
+    /**
+     * 获取服务
+     * @param key
+     * @return
+     */
+    public Observable<Object> getServer(String key){
+        return requests(RetrofitFactory.getInstance().create(ServerApi.class).getServer(key),false);
+    }
+
+    /**
+     * 删除 s
+     * @param key
+     * @param sid
+     * @return
+     */
+    public Observable<Object> delectServer(String key,String sid){
+        return requests(RetrofitFactory.getInstance().create(ServerApi.class).delectServer(key,sid),false);
+    }
+
 
 }
