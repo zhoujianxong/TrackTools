@@ -1,6 +1,12 @@
 package com.example.tracktools.api;
 
 
+import com.example.tracktools.bean.Data;
+import com.example.tracktools.bean.Result;
+import com.example.tracktools.bean.ServerBean;
+
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -62,7 +68,7 @@ public class HttpReq {
      * @param key
      * @return
      */
-    public Observable<Object> getServer(String key){
+    public Observable<Result<Data<List<ServerBean>>>> getServer(String key){
         return requests(RetrofitFactory.getInstance().create(ServerApi.class).getServer(key),false);
     }
 

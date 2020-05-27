@@ -1,16 +1,22 @@
 package com.example.tracktools;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.navi.AMapNavi;
+import com.amap.api.navi.AmapNaviPage;
+import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.enums.AimLessMode;
 import com.amap.api.navi.enums.NaviType;
 import com.amap.api.track.AMapTrackClient;
@@ -35,13 +41,18 @@ import com.example.tracktools.api.HttpReq;
 import com.example.tracktools.api.ObserverResponse;
 import com.example.tracktools.base.BaseActivity;
 import com.example.tracktools.databinding.ActivityMainBinding;
+import com.example.tracktools.maplisener.AnalyticsINaviInfoCallback;
 import com.example.tracktools.maplisener.AnalyticsOnTrackLifecycleListener;
 import com.example.tracktools.maplisener.AnalyticsTrackListener;
+import com.example.tracktools.modle.ServerHomeActivity;
+import com.example.tracktools.utils.PermissionsUtils;
 
 import java.util.Optional;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.amap.api.maps.AMap.MAP_TYPE_NAVI;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, Integer> {
     private String TAG = MainActivity.class.getSimpleName();
@@ -64,6 +75,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, Integer> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //权限申请
+        initPermissions();
+//        //启用导航组件
+//        AmapNaviPage.getInstance().showRouteActivity(mActivity,new AmapNaviParams(null),null);
         //初始话
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
         aMapTrackClient.setInterval(5, 30);
@@ -74,13 +89,43 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, Integer> {
         initMap(savedInstanceState);
         startTrack();
         queryDistance();
+        binding.mChronometerView.start();
+
+        binding.mSetting.setOnClickListener(v -> {
+            startActivity(new Intent(this, ServerHomeActivity.class));
+        });
+    }
+
+    private void initPermissions() {
+        PermissionsUtils.getInstance().chekPermissions(this, new String[]{
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.WAKE_LOCK
+        }, new PermissionsUtils.IPermissionsResult() {
+            @Override
+            public void passPermissons() {
+
+            }
+
+            @Override
+            public void forbitPermissons() {
+
+            }
+        });
     }
 
     private void initMap(Bundle savedInstanceState) {
-        binding.mMapView.onCreate(savedInstanceState);
-        aMapNavi = AMapNavi.getInstance(getApplicationContext());
-        aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
-        aMapNavi.startNavi(NaviType.EMULATOR);
+        binding.mAMapNaviView.onCreate(savedInstanceState);
+        aMapNavi = AMapNavi.getInstance(MyApplication.context);
+        aMapNavi.startGPS();
 
     }
 
@@ -128,7 +173,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, Integer> {
                     // 行驶里程查询成功，行驶了meters米
                     Log.v(TAG, "查询行驶里程 成功" + meters + "米");
                     binding.mTextView.setText("已经行驶了 " + meters + " 米 ");
-                    mHandler.sendEmptyMessageDelayed(what,time);
+                    mHandler.sendEmptyMessageDelayed(what, time);
                 } else {
                     // 行驶里程查询失败
                     Log.v(TAG, "查询行驶里程 失败" + distanceResponse.getErrorMsg());
@@ -205,27 +250,27 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, Integer> {
     @Override
     protected void onPause() {
         super.onPause();
-        binding.mMapView.onPause();
-        this.isNotTop=false;
+        binding.mAMapNaviView.onPause();
+        this.isNotTop = false;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.isNotTop=true;
-        binding.mMapView.onResume();
+        this.isNotTop = true;
+        binding.mAMapNaviView.onResume();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        binding.mMapView.onSaveInstanceState(outState);
+        binding.mAMapNaviView.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.isNotTop=false;
-        binding.mMapView.onDestroy();
+        this.isNotTop = false;
+        binding.mAMapNaviView.onDestroy();
     }
 }

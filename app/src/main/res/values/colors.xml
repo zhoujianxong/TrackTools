@@ -5,4 +5,5 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="ui_gray">#838383</color> <!-- 用于辅助性文字颜色 -->
     <color name="ui_activity_bg">#EFF9FF</color> <!-- 用于界面底色背景 -->
+    <color name="colorTime">#3085FF</color>
 </resources>

@@ -3,7 +3,14 @@ package com.example.tracktools.api;
 import android.util.Log;
 
 import com.example.tracktools.base.BaseActivity;
+import com.example.tracktools.bean.Data;
+import com.example.tracktools.bean.Result;
+import com.example.tracktools.bean.ServerBean;
 
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -40,24 +47,12 @@ public class ServerHttp {
 
     /**
      * 返回服务器
-     * @param activity
      */
-    public static void getServer(BaseActivity activity) {
-        HttpReq.getInstance()
+    public static Observable<Result<Data<List<ServerBean>>>> getServer() {
+        return HttpReq.getInstance()
                 .getServer(ServerKEY)
                 .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ObserverResponse<Object>(activity) {
-                    @Override
-                    public void success(Object data) {
-                        Log.v("TAG", "getServer  " + data.toString());
-                    }
-
-                    @Override
-                    public void error(Throwable e) {
-                        Log.v("TAG", "e  " + e);
-                    }
-                });
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
 
