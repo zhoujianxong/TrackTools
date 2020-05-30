@@ -20,7 +20,7 @@
             android:padding="12dp"
             android:textStyle="bold"
             android:textColor="@color/ui_gray"
-            android:text="选择服务器名字 用来上传轨迹！"/>
+            android:text="选择服务器 用来上传轨迹！"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mRecyclerView"

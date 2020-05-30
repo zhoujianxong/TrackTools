@@ -14,12 +14,15 @@
 
         <ImageView
             android:id="@+id/mItemServerHomeImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_server"/>
 
         <TextView
             android:id="@+id/mItemServerHomeName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="server1"/>
     </LinearLayout>
 </layout>
